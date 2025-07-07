@@ -2,10 +2,11 @@ from flask import Flask, render_template, request
 import requests
 import json
 import re
+from config import GROQ_API_KEY, GROQ_MODEL, OPENCAGE_API_KEY, HUNTER_API_KEY
+import os
 
+GROQ_MODEL = "llama3-8b-8192"
 app = Flask(__name__)
-
-
 
 # === Groq: Get Companies by Sector (returns JSON-formatted) ===
 def get_companies(sector):
