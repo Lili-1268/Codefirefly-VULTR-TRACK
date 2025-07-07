@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+    <title>Company Map & Contact Finder</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 500px; margin-top: 20px; }
+        body { font-family: sans-serif; margin: 20px; }
+        input, button { padding: 8px; font-size: 1em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Find Companies by Sector</h1>
+
+    <form method="POST">
+        <input type="text" name="sector" placeholder="e.g. Renewable Energy" required>
+        <button name="sector_submit" type="submit">Search</button>
+    </form>
+
+    {% if sector_error %}
+        <p style="color: red;">Error: {{ sector_error }}</p>
+    {% endif %}
+
+    {% if companies %}
+        <h2>Found Companies</h2>
+        <ul>
+            {% for c in companies %}
+                <li><strong>{{ c.name }}</strong>: {{ c.description }}</li>
+            {% endfor %}
+        </ul>
+
+        <div id="map"></div>
+    {% endif %}
+
+    <hr>
+    <h2>Get Contact Emails by Domain</h2>
+    <form method="POST">
+        <input type="text" name="domain" placeholder="e.g. beyondmeat.com" required>
+        <button name="domain_submit" type="submit">Search</button>
+    </form>
+
+    {% if domain_error %}
+        <p style="color: red;">{{ domain_error }}</p>
+    {% endif %}
+
+    {% if emails %}
+        <h3>Contact People</h3>
+        <ul>
+            {% for email in emails %}
+                <li>
+                    <strong>{{ email.first_name }} {{ email.last_name }}</strong><br>
+                    {{ email.position or 'No title' }}<br>
+                    <a href="mailto:{{ email.value }}">{{ email.value }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        {% if companies %}
+        var map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var markers = [];
+
+        {% for c in companies %}
+        var marker = L.marker([{{ c.lat }}, {{ c.lng }}])
+            .addTo(map)
+            .bindPopup("<b>{{ c.name }}</b><br>{{ c.description }}");
+        markers.push(marker.getLatLng());
+        {% endfor %}
+
+        if (markers.length > 0) {
+            var bounds = L.latLngBounds(markers);
+            map.fitBounds(bounds);
+        }
+        {% endif %}
+    </script>
+</body>
+</html>
