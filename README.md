@@ -18,3 +18,15 @@ The map is generated using the OpenCage Data API, which provides geolocation inf
 
 Hunter.io is used to find contact persons within a company.
 An API key allows for seamless integration with their database. By providing a domain name, the API can return the email addresses of specific individuals associated with that organization.
+
+## Deployment 
+
+The app is deployed using Flask on a Vultr server. The Vultr server has the following specifications:
+
+    vCPU: 1 vCPU
+
+    RAM: 4096 MB (4 GB)
+
+    Storage: 30 GB NVMe
+
+    Operating System: Ubuntu 22.04 x64
