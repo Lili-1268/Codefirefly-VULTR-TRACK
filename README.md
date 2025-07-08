@@ -6,9 +6,9 @@ This project helps companies find new customers more easily. Users searching for
 
 The LLaMA model, accessed via the GROQ API, is used to generate customer suggestions.
 
-    The specific model in use is LLaMA 3-8B-8192.
+The specific model in use is LLaMA 3-8B-8192.
 
-    An API key for GROQ has been previously created and configured.
+An API key for GROQ has been previously created and configured.
 
 ## MAP 
 
