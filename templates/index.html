@@ -1,83 +1,183 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-    <title>Company Map & Contact Finder</title>
     <meta charset="utf-8">
+    <title>Prospects Monitoring</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 500px; margin-top: 20px; }
-        body { font-family: sans-serif; margin: 20px; }
-        input, button { padding: 8px; font-size: 1em; margin-top: 10px; }
+        body {
+            background-color: #e6f0ff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: #003366;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 90%;
+            padding: 25px 30px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            max-height: 90vh;
+            text-align: center;
+        }
+        img.logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        h1.project-title {
+            color: #004080;
+            margin: 0 0 5px 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        p.project-desc {
+            color: #0059b3;
+            margin: 0 0 25px 0;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+        h2, h3 {
+            color: #004080;
+            margin-top: 0;
+            text-align: left;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        input[type="text"], button {
+            padding: 8px;
+            font-size: 1em;
+            margin-top: 10px;
+            width: calc(100% - 20px);
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #004080;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #003366;
+        }
+        #map {
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        ul {
+            padding-left: 20px;
+            color: #00264d;
+            text-align: left;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #004080;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        p.error {
+            color: red;
+            margin-top: 10px;
+        }
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
-    <h1>Find Companies by Sector</h1>
+    <div class="container">
+        <img src="{{ url_for('static', filename='pic.PNG') }}" alt="Logo" class="logo" />
+        <h1 class="project-title">PROSPECTS MONITORING</h1>
+        <p class="project-desc">Locate, track, and contact new business leads efficiently.</p>
 
-    <form method="POST">
-        <input type="text" name="sector" placeholder="e.g. Renewable Energy" required>
-        <button name="sector_submit" type="submit">Search</button>
-    </form>
+        <h2>Find Companies by Sector</h2>
+        <form method="POST">
+            <input type="text" name="sector" placeholder="e.g. Renewable Energy" required />
+            <button name="sector_submit" type="submit">Search</button>
+        </form>
 
-    {% if sector_error %}
-        <p style="color: red;">Error: {{ sector_error }}</p>
-    {% endif %}
+        {% if sector_error %}
+            <p class="error">Error: {{ sector_error }}</p>
+        {% endif %}
 
-    {% if companies %}
-        <h2>Found Companies</h2>
-        <ul>
-            {% for c in companies %}
-                <li><strong>{{ c.name }}</strong>: {{ c.description }}</li>
-            {% endfor %}
-        </ul>
+        {% if companies %}
+            <h2>Found Companies</h2>
+            <ul>
+                {% for c in companies %}
+                    <li><strong>{{ c.name }}</strong>: {{ c.description }}</li>
+                {% endfor %}
+            </ul>
 
-        <div id="map"></div>
-    {% endif %}
+            <div id="map"></div>
+        {% endif %}
 
-    <hr>
-    <h2>Get Contact Emails by Domain</h2>
-    <form method="POST">
-        <input type="text" name="domain" placeholder="e.g. beyondmeat.com" required>
-        <button name="domain_submit" type="submit">Search</button>
-    </form>
+        <hr />
 
-    {% if domain_error %}
-        <p style="color: red;">{{ domain_error }}</p>
-    {% endif %}
+        <h2>Get Contact Emails by Domain</h2>
+        <form method="POST">
+            <input type="text" name="domain" placeholder="e.g. beyondmeat.com" required />
+            <button name="domain_submit" type="submit">Search</button>
+        </form>
 
-    {% if emails %}
-        <h3>Contact People</h3>
-        <ul>
-            {% for email in emails %}
-                <li>
-                    <strong>{{ email.first_name }} {{ email.last_name }}</strong><br>
-                    {{ email.position or 'No title' }}<br>
-                    <a href="mailto:{{ email.value }}">{{ email.value }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% if domain_error %}
+            <p class="error">{{ domain_error }}</p>
+        {% endif %}
+
+        {% if emails %}
+            <h3>Contact People</h3>
+            <ul>
+                {% for email in emails %}
+                    <li>
+                        <strong>{{ email.first_name }} {{ email.last_name }}</strong><br />
+                        {{ email.position or 'No title' }}<br />
+                        <a href="mailto:{{ email.value }}">{{ email.value }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         {% if companies %}
-        var map = L.map('map').setView([0, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+            var map = L.map('map').setView([0, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
 
-        var markers = [];
+            var markers = [];
 
-        {% for c in companies %}
-        var marker = L.marker([{{ c.lat }}, {{ c.lng }}])
-            .addTo(map)
-            .bindPopup("<b>{{ c.name }}</b><br>{{ c.description }}");
-        markers.push(marker.getLatLng());
-        {% endfor %}
+            {% for c in companies %}
+                var marker = L.marker([{{ c.lat }}, {{ c.lng }}])
+                    .addTo(map)
+                    .bindPopup("<b>{{ c.name }}</b><br>{{ c.description }}");
+                markers.push(marker.getLatLng());
+            {% endfor %}
 
-        if (markers.length > 0) {
-            var bounds = L.latLngBounds(markers);
-            map.fitBounds(bounds);
-        }
+            if (markers.length > 0) {
+                var bounds = L.latLngBounds(markers);
+                map.fitBounds(bounds);
+            }
         {% endif %}
     </script>
 </body>
